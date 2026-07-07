@@ -4,7 +4,6 @@ export default {
       return new Response("Method not allowed", { status: 405 });
     }
 
-    // Simple shared-secret check so random people can't hit your worker
     const authHeader = request.headers.get("X-Auth-Token");
     if (authHeader !== env.SHARED_SECRET) {
       return new Response("Unauthorized", { status: 401 });
@@ -17,27 +16,29 @@ export default {
       return new Response("Bad JSON", { status: 400 });
     }
 
-    const { name, answers } = data; // answers: [{ question, answer }, ...]
+    const { name, answers } = data;
     if (!name || !Array.isArray(answers)) {
       return new Response("Missing name or answers", { status: 400 });
     }
 
     const fields = answers.map(a => ({
-      name: String(a.question).slice(0, 256),
-      value: String(a.answer || "N/A").slice(0, 1024),
+      name: "** **\n" + String(a.question).slice(0, 256),
+      value: "```" + String(a.answer || "N/A").slice(0, 1000) + "```",
       inline: false
     }));
 
     const embed = {
-      title: `New Application — ${name}`,
-      color: 0xFF2E63, // red-pink accent
+      title: "✦ New Application — " + name,
+      color: 0xFF2E63,
       fields,
       timestamp: new Date().toISOString(),
       footer: { text: "Editing Team Applications" }
     };
 
     const payload = {
-      thread_name: String(name).slice(0, 100), // creates the forum post title
+      thread_name: name.slice(0, 100),
+      applied_tags: ["1524199192275456072"],
+      content: "<@&1524197706925604865> new application received!",
       embeds: [embed]
     };
 
