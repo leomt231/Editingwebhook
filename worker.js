@@ -37,7 +37,6 @@ export default {
 
     const payload = {
       thread_name: name.slice(0, 100),
-      applied_tags: [1524199192275456072],
       content: "<@&1524197706925604865> new application received!",
       embeds: [embed]
     };
