@@ -10,35 +10,12 @@ export default {
     }
 
     let data;
-    try {
-      data = await request.json();
-    } catch {
-      return new Response("Bad JSON", { status: 400 });
-    }
+    try { data = await request.json(); } catch { return new Response("Bad JSON", { status: 400 }); }
 
-    const { name, answers } = data;
-    if (!name || !Array.isArray(answers)) {
-      return new Response("Missing name or answers", { status: 400 });
-    }
-
-    const fields = answers.map(a => ({
-      name: "** **\n" + String(a.question).slice(0, 256),
-      value: "```" + String(a.answer || "N/A").slice(0, 1000) + "```",
-      inline: false
-    }));
-
-    const embed = {
-      title: "✦ New Application — " + name,
-      color: 0xFF2E63,
-      fields,
-      timestamp: new Date().toISOString(),
-      footer: { text: "Editing Team Applications" }
-    };
-
+    // Bare minimum test payload
     const payload = {
-      thread_name: name.slice(0, 100),
-      content: "<@&1524197706925604865> new application received!",
-      embeds: [embed]
+      "thread_name": "Test Application Thread",
+      "content": "<@&1524197706925604865> A new form was submitted!"
     };
 
     const discordRes = await fetch(env.WEBHOOK_URL, {
